@@ -1,0 +1,23 @@
+{
+  "name": "dwb-stitch-async-mcp",
+  "version": "1.0.0",
+  "description": "Google Stitch MCP examples for the Dev with Bebz ChatGPT MCP workshop",
+  "main": "artifact-server.mjs",
+  "scripts": {
+    "start": "node artifact-server.mjs",
+    "start:async": "node server.mjs",
+    "start:combo": "node combo-server.mjs",
+    "smoke": "node artifact-smoke-test.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "chatgpt",
+    "google-stitch"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "@google/stitch-sdk": "0.3.5",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "4.3.5"
+  }
+}

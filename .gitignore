@@ -1,0 +1,35 @@
+# Local workspace / editor metadata
+.serena/
+.vscode/
+.idea/
+
+# Node.js dependencies
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime / generated data
+stitch-async-mcp/jobs/
+stitch-output/
+*.log
+
+# Secrets - never commit
+.env
+.env.*
+!.env.example
+**/runtime-api-key.txt
+**/stitch-api-key.txt
+**/*api-key*.txt
+**/*.pem
+**/*.key
+
+# OpenAI tunnel-client is downloaded separately
+**/tunnel-client.exe
+**/tunnel-client/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

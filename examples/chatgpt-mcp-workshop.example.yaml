@@ -1,0 +1,27 @@
+config_version: 1
+
+control_plane:
+  base_url: "https://api.openai.com"
+  # Replace with your own Tunnel ID.
+  tunnel_id: "<YOUR_TUNNEL_ID>"
+  # Keep the actual key outside Git and point to its local file.
+  api_key: "file:<ABSOLUTE_PATH_TO_RUNTIME_API_KEY>"
+
+health:
+  listen_addr: "127.0.0.1:18020"
+
+admin_ui:
+  open_browser: false
+
+log:
+  level: info
+  format: json
+
+mcp:
+  commands:
+    - channel: main
+      # File System MCP example.
+      command: 'npx -y @modelcontextprotocol/server-filesystem "<ABSOLUTE_PATH_TO_WORKSPACE>/mcp-demo-files"'
+
+      # Google Stitch example: replace the command above with this line.
+      # command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/stitch-async-mcp/artifact-server.mjs"'

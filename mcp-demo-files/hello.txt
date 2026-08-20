@@ -1,0 +1,2 @@
+Hello from my local computer.
+This file is inside the MCP demo folder.
