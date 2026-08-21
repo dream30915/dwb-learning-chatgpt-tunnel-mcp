@@ -1,0 +1,4 @@
+secrets/*.txt
+tunnel-client/
+serena-runtime/
+logs/
