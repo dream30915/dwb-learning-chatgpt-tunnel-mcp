@@ -25,37 +25,8 @@ $exePath = Join-Path $tunnelDir "tunnel-client.exe"
 if (Test-Path $exePath) {
   Write-Host "Keeping existing tunnel-client.exe"
 } else {
-  Write-Host "Downloading OpenAI tunnel-client for Windows..."
-  $headers = @{
-    "User-Agent" = "woravej-chatgpt-mcp-workshop"
-    "Accept" = "application/vnd.github+json"
-  }
-  $release = Invoke-RestMethod -Uri "https://api.github.com/repos/openai/tunnel-client/releases/latest" -Headers $headers
-  $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "amd64" }
-  $asset = $release.assets |
-    Where-Object { $_.name -like "tunnel-client-v*-windows-$arch.zip" -and $_.name -notlike "*cloudflared*" } |
-    Select-Object -First 1
-  if (-not $asset) {
-    throw "Could not find Windows $arch tunnel-client zip in the latest OpenAI release."
-  }
-
-  $zip = Join-Path $env:TEMP "tunnel-client-windows-$arch.zip"
-  $extract = Join-Path $env:TEMP "tunnel-client-extract-$arch"
-  if (Test-Path $extract) { Remove-Item $extract -Recurse -Force }
-  New-Item -ItemType Directory -Force -Path $extract | Out-Null
-  curl.exe -L --fail --retry 3 --retry-delay 2 -o $zip $asset.browser_download_url
-  if ($LASTEXITCODE -ne 0) { throw "Failed to download tunnel-client zip" }
-  Expand-Archive -Path $zip -DestinationPath $extract -Force
-
-  $downloadedExe = Get-ChildItem $extract -Recurse -Filter "tunnel-client.exe" | Select-Object -First 1
-  if (-not $downloadedExe) { throw "tunnel-client.exe was not inside the downloaded zip" }
-  Copy-Item $downloadedExe.FullName $exePath -Force
-
-  $cloudflared = Get-ChildItem $extract -Recurse -Filter "cloudflared.exe" | Select-Object -First 1
-  if ($cloudflared) {
-    Copy-Item $cloudflared.FullName (Join-Path $tunnelDir "cloudflared.exe") -Force
-  }
-  Write-Host "Installed tunnel-client.exe from $($release.tag_name)"
+  Write-Warning "tunnel-client.exe is not installed by this script."
+  Write-Host "Download it from the OpenAI page for your account, then place it at: $exePath"
 }
 
 $keyFile = Join-Path $tunnelDir "runtime-api-key.txt"
