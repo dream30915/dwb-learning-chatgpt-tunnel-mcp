@@ -1,0 +1,2 @@
+Hello from computer-workspace.
+ChatGPT can read and write files in this folder, and run PowerShell with this folder as the working directory.

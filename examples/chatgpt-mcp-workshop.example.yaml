@@ -20,8 +20,11 @@ log:
 mcp:
   commands:
     - channel: main
-      # File System MCP example.
-      command: 'npx -y @modelcontextprotocol/server-filesystem "<ABSOLUTE_PATH_TO_WORKSPACE>/mcp-demo-files"'
+      # Computer MCP is the default: files + PowerShell in computer-workspace.
+      command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/computer-mcp/server.mjs"'
+
+      # File System MCP example: replace the command above with this line.
+      # command: 'npx -y @modelcontextprotocol/server-filesystem "<ABSOLUTE_PATH_TO_WORKSPACE>/mcp-demo-files"'
 
       # Google Stitch example: replace the command above with this line.
       # command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/stitch-async-mcp/artifact-server.mjs"'

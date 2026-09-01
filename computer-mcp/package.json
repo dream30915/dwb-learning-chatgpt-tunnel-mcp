@@ -1,0 +1,14 @@
+{
+  "name": "woravej-computer-mcp",
+  "version": "1.0.0",
+  "description": "Local computer MCP for the Woravej ChatGPT workshop: files plus PowerShell inside a workspace folder",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "4.3.5"
+  }
+}
