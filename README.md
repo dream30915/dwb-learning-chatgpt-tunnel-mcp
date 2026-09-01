@@ -175,11 +175,9 @@ Profile ที่ถูกเขียนแล้วชี้ Computer MCP แ�
 
 > API Key คือ secret ห้าม commit ขึ้น Git และห้ามแชร์ใน screenshot/video หาก key นั้นยังใช้งานอยู่
 
-## ดาวน์โหลด tunnel-client
+## วาง tunnel-client จากบัญชี OpenAI ของคุณ
 
-`.\scripts\setup-computer-mcp.ps1` จะดาวน์โหลด `tunnel-client.exe` จาก [OpenAI tunnel-client releases](https://github.com/openai/tunnel-client/releases/latest) แล้ววางไว้ใน `tunnel-client/` ให้แล้ว
-
-ถ้ายังไม่มีไฟล์นี้ ให้รันสคริปต์อีกครั้ง หรือโหลด zip ชื่อ `tunnel-client-v*-windows-amd64.zip` จากหน้า release แล้ว copy `tunnel-client.exe` มาที่โฟลเดอร์นี้:
+สคริปต์จะไม่ดาวน์โหลด `tunnel-client.exe` ให้ ไฟล์นี้ต้องมาจากหน้า OpenAI ของบัญชีคุณ แล้วนำมาวางในโฟลเดอร์นี้:
 
 ```text
 tunnel-client/
