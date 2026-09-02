@@ -20,8 +20,13 @@ log:
 mcp:
   commands:
     - channel: main
-      # File System MCP example.
-      command: 'npx -y @modelcontextprotocol/server-filesystem "<ABSOLUTE_PATH_TO_WORKSPACE>/mcp-demo-files"'
+      # Computer MCP is the default: files + allowlisted read-only commands.
+      # Freeform PowerShell is off unless COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL=1
+      # is set on the process that starts tunnel-client. Do not put that env in this file.
+      command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/computer-mcp/server.mjs"'
+
+      # File System MCP example: replace the command above with this line.
+      # command: 'npx -y @modelcontextprotocol/server-filesystem "<ABSOLUTE_PATH_TO_WORKSPACE>/mcp-demo-files"'
 
       # Google Stitch example: replace the command above with this line.
       # command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/stitch-async-mcp/artifact-server.mjs"'

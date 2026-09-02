@@ -13,6 +13,8 @@ pnpm-debug.log*
 # Runtime / generated data
 stitch-async-mcp/jobs/
 stitch-output/
+computer-workspace/*
+!computer-workspace/hello.txt
 *.log
 
 # Secrets - never commit
