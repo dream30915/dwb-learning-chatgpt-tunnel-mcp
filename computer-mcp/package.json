@@ -1,10 +1,12 @@
 {
   "name": "woravej-computer-mcp",
   "version": "1.0.0",
-  "description": "Local computer MCP for the Woravej ChatGPT workshop: files plus PowerShell inside a workspace folder",
+  "description": "Local computer MCP for the Woravej ChatGPT workshop: sandboxed files plus allowlisted read-only commands. Unrestricted PowerShell is opt-in.",
   "main": "server.mjs",
+  "type": "module",
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "test": "node --test ./test/paths.test.mjs ./test/allowlist.test.mjs ./test/powershell.test.mjs"
   },
   "license": "ISC",
   "dependencies": {

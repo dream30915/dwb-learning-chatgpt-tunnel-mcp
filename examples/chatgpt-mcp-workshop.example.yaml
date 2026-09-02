@@ -20,7 +20,9 @@ log:
 mcp:
   commands:
     - channel: main
-      # Computer MCP is the default: files + PowerShell in computer-workspace.
+      # Computer MCP is the default: files + allowlisted read-only commands.
+      # Freeform PowerShell is off unless COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL=1
+      # is set on the process that starts tunnel-client. Do not put that env in this file.
       command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/computer-mcp/server.mjs"'
 
       # File System MCP example: replace the command above with this line.

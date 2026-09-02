@@ -17,7 +17,7 @@ MCP Server
       |
       +--> Local Files
       |
-      +--> Computer (PowerShell + workspace)
+      +--> Computer (workspace files + allowlisted commands)
       |
       +--> Google Stitch
 ```
@@ -34,6 +34,8 @@ MCP Server
 │  └─ hello.txt
 ├─ computer-mcp/
 │  ├─ server.mjs
+│  ├─ lib/
+│  ├─ test/
 │  ├─ package.json
 │  └─ package-lock.json
 ├─ examples/
@@ -144,7 +146,7 @@ pwd
 
 # Part 2 — เชื่อม ChatGPT ผ่าน OpenAI Secure Tunnel
 
-ค่าเริ่มต้นของ Workshop นี้คือ **Computer MCP** (`computer-mcp/server.mjs`) ไม่ใช่ File System MCP ChatGPT จะอ่าน/เขียนไฟล์ใน `computer-workspace` และรัน PowerShell จากโฟลเดอร์นั้น
+ค่าเริ่มต้นของ Workshop นี้คือ **Computer MCP** (`computer-mcp/server.mjs`) ไม่ใช่ File System MCP ChatGPT จะอ่าน/เขียนไฟล์ใน `computer-workspace` และรันคำสั่ง read-only ที่กำหนด ID ไว้เท่านั้น **ไม่มี freeform PowerShell ในโหมดมาตรฐาน**
 
 จัด path และติดตั้ง dependency บนเครื่องนี้ก่อน:
 
@@ -213,7 +215,7 @@ mcp:
       command: 'node "<ABSOLUTE_PATH_TO_WORKSPACE>/computer-mcp/server.mjs"'
 ```
 
-เมื่อ Tunnel และ MCP Server พร้อมแล้ว จึงสร้าง/refresh Plugin ใน ChatGPT แล้วทดลองให้ ChatGPT อ่าน `hello.txt` ใน `computer-workspace` หรือรัน PowerShell สั้น ๆ เช่น `Get-Date`
+เมื่อ Tunnel และ MCP Server พร้อมแล้ว จึงสร้าง/refresh Plugin ใน ChatGPT แล้วทดลองให้ ChatGPT อ่าน `hello.txt` ใน `computer-workspace` หรือเรียก `run_allowed_command` ด้วย `command_id` เป็น `get_date`
 
 ---
 
@@ -307,10 +309,12 @@ File System MCP ใน Part 1 อ่าน/เขียนไฟล์ใน `mc
 `computer-mcp` ให้ ChatGPT:
 
 - ดูสถานะเครื่องและโฟลเดอร์ที่อนุญาต
-- อ่าน/เขียนไฟล์ใน `computer-workspace`
-- รัน PowerShell โดยเริ่มจากโฟลเดอร์นั้น
+- อ่าน/เขียนไฟล์ใน `computer-workspace` (กัน `..`, absolute path และ junction/symlink ที่ชี้นอกโฟลเดอร์)
+- รันคำสั่ง read-only ที่กำหนด ID ไว้ (`get_date`, `os_info`) ผ่าน `run_allowed_command`
 
-ไฟล์ที่ MCP เขียนเองถูกกันไว้ในโฟลเดอร์ `computer-workspace` คำสั่ง PowerShell ยังสามารถกระทบ Windows ทั้งเครื่องได้ถ้าสั่งผิด ดังนั้นอย่าชี้ `COMPUTER_MCP_ROOT` ไปที่ `C:\` หรือโฟลเดอร์ระบบ
+โหมดมาตรฐาน **ไม่รับสตริง PowerShell อิสระ** เครื่องมือ `run_powershell` ถูกถอดออกแล้ว ถ้าต้องการ shell ทั้งเครื่องต้องตั้ง `COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL=1` บน process ที่รัน `tunnel-client` จากนั้นจะมี tool ชื่อ `run_powershell_unsafe` MCP annotation หรือข้อความยืนยันจากโมเดล **ไม่ใช่** การควบคุมฝั่งเซิร์ฟเวอร์
+
+อย่าชี้ `COMPUTER_MCP_ROOT` ไปที่ `C:\` หรือโฟลเดอร์ระบบ อย่าใส่ unrestricted-shell env ลงใน YAML ที่ generate จากสคริปต์ setup
 
 ## ติดตั้งบนเครื่องนี้
 
@@ -341,13 +345,21 @@ npm start
 node .\server.mjs
 ```
 
-Tools หลัก:
+Tools หลัก (โหมดมาตรฐาน):
 
 - `computer_status`
 - `list_workspace`
 - `read_text_file`
 - `write_text_file`
-- `run_powershell`
+- `run_allowed_command` (`command_id`: `get_date` หรือ `os_info`)
+
+`run_powershell_unsafe` มีเฉพาะเมื่อตั้ง:
+
+```powershell
+$env:COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL="1"
+```
+
+บน process ที่ start MCP หรือ tunnel-client ค่าอื่นที่ไม่ใช่ `1` ยังคงปิด shell
 
 ทดลองใน Inspector จาก root ของ repo:
 
@@ -356,7 +368,14 @@ cd D:\Users\Woravejdump\Documents\GitHub\dwb-learning-chatgpt-tunnel-mcp
 npx -y @modelcontextprotocol/inspector node .\computer-mcp\server.mjs
 ```
 
-จากนั้น Connect แล้วลอง `read_text_file` กับ `hello.txt` หรือ `run_powershell` ด้วยคำสั่งสั้น ๆ เช่น `Get-Date`
+จากนั้น Connect แล้วลอง `read_text_file` กับ `hello.txt` หรือ `run_allowed_command` ด้วย `get_date`
+
+ตรวจ regression:
+
+```powershell
+cd D:\Users\Woravejdump\Documents\GitHub\dwb-learning-chatgpt-tunnel-mcp\computer-mcp
+npm test
+```
 
 ถ้า Inspector เปิดอยู่แล้วจากโฟลเดอร์ผิด ให้ `Ctrl+C` แล้วรันใหม่จาก repo
 
@@ -383,7 +402,15 @@ mcp:
 
 - อ่าน `hello.txt` ใน `computer-workspace`
 - สร้างไฟล์ใหม่ในโฟลเดอร์นั้น
-- รัน PowerShell สั้น ๆ บนเครื่องนี้
+- เรียก `run_allowed_command` ด้วย `get_date`
+
+อย่ารัน unrestricted shell ใน workshop ปกติ หากต้องเปิดชั่วคราว ให้ตั้ง env บนหน้าต่างที่รัน `tunnel-client.exe` แล้ว **restart tunnel-client** (MCP process ใหม่จะโหลด tool ชุดใหม่) ไม่พอแค่ refresh plugin
+
+```powershell
+$env:COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL="1"
+```
+
+ความเสี่ยงที่ยังเหลือเมื่อเปิด unsafe mode: คำสั่งรันด้วยสิทธิ์ Windows user เดียวกัน, สืบทอด `process.env` ทั้งก้อน, และ denylist เป็นชั้นเสริมเท่านั้น ไม่ใช่ security boundary Timeout จะ `taskkill /T /F` process tree แต่ผลข้างเคียงที่เขียนลงดิสก์ไปแล้วจะไม่ถูกย้อนกลับ
 
 ขยายโฟลเดอร์ที่อนุญาตได้ด้วย Environment Variable (ยังคงเป็นโฟลเดอร์ที่คุณเลือกเอง ไม่ใช่ทั้งดิสก์):
 
@@ -431,6 +458,8 @@ mcp:
 ก่อน push ขึ้น GitHub ให้เช็กอย่างน้อย:
 
 ```powershell
+cd .\computer-mcp
+npm test
 git status
 git grep -n "sk-"
 git grep -n "tunnel_"

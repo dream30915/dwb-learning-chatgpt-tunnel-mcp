@@ -85,7 +85,9 @@ log:
 mcp:
   commands:
     - channel: main
-      # Computer MCP is the default: files + PowerShell in computer-workspace.
+      # Computer MCP is the default: files + allowlisted read-only commands.
+      # Freeform PowerShell is off unless COMPUTER_MCP_ALLOW_UNRESTRICTED_SHELL=1
+      # is set on the process that starts tunnel-client. This script does not set that env.
       command: '$mcpCommand'
 
       # File System MCP example: replace the command above with this line.
@@ -99,7 +101,8 @@ Set-Content -Path $profilePath -Value $yaml.TrimEnd() -Encoding utf8
 Write-Host "Wrote local profile: $profilePath"
 
 Write-Host ""
-Write-Host "Computer MCP is ready. You still need to create the Tunnel yourself:"
+Write-Host "Computer MCP is ready (files + allowlisted commands; freeform PowerShell is off)."
+Write-Host "You still need to create the Tunnel yourself:"
 Write-Host "1. Create a Tunnel in OpenAI / ChatGPT Developer Mode and copy the Tunnel ID."
 Write-Host "2. Put the Runtime API Key into: $keyFile"
 Write-Host "3. Put the Tunnel ID into: $profilePath"
